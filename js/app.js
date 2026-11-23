@@ -67,6 +67,8 @@
       const secs = sections.filter(s => s.nav === grp);
       if (!secs.length) return;
       h += '<div class="nav-group">' + esc(grp) + '</div>';
+      if (window.DBUI && grp === 'Rides') h += '<a class="nav-link" href="#/db/vehicles" data-r="db/vehicles"><span class="ico">🚗</span>Vehicle Database<span class="cnt">' + DBUI.counts.vehicles + '</span></a>';
+      if (window.DBUI && grp === 'Gear') h += '<a class="nav-link" href="#/db/weapons" data-r="db/weapons"><span class="ico">🔫</span>Weapon Database<span class="cnt">' + DBUI.counts.weapons + '</span></a>';
       secs.forEach(s => {
         h += '<a class="nav-link" href="#/s/' + s.id + '" data-r="s/' + s.id + '"><span class="ico">' + s.icon + '</span>' + esc(s.title) +
              '<span class="cnt">' + s.count + '</span></a>';
@@ -110,6 +112,7 @@
     const pl = placeOf(it);
     if (pl) body += '<div class="c-actions"><a class="btn sm" href="#/map?focus=' + encodeURIComponent(it.id) + '">📍 ' + esc(it.at) + ' on the map</a></div>';
     return '<article class="card' + (body ? '' : ' slim') + '" id="c-' + esc(it.id) + '">' +
+      (it.img ? '<img class="card-img" src="assets/img/' + esc(it.img) + '.jpg" alt="' + esc(it.n) + '" loading="lazy">' : '') +
       '<div class="c-top"><div class="c-main"><h4 class="c-name">' + (num ? '<span class="c-num">' + num + '</span>' : '') + esc(it.n) + '</h4>' +
         (it.s ? '<div class="c-sub">' + esc(it.s) + '</div>' : '') +
         ((it.b && it.b.length) || (sec.type === 'cheats') ? '<div class="c-badges">' + (it.b || []).map(badge).join('') + (sec.type === 'cheats' ? codeHTML(it.code) : '') + '</div>' : '') +
@@ -204,6 +207,8 @@
       secs.forEach(s => {
         h += '<a class="tile" href="#/s/' + s.id + '"><span class="t-cnt">' + s.count + '</span><span class="t-ico">' + s.icon + '</span><b>' + esc(s.title) + '</b><span>' + esc(strip(s.blurb).split('. ')[0]) + '.</span></a>';
       });
+      if (window.DBUI && grp === 'Rides') h += '<a class="tile" href="#/db/vehicles"><span class="t-cnt">' + DBUI.counts.vehicles + '</span><span class="t-ico">🚗</span><b>Vehicle Database</b><span>Every car, bike, boat and aircraft with its own page.</span></a>';
+      if (window.DBUI && grp === 'Gear') h += '<a class="tile" href="#/db/weapons"><span class="t-cnt">' + DBUI.counts.weapons + '</span><span class="t-ico">🔫</span><b>Weapon Database</b><span>Every gun and variant with its own page.</span></a>';
       if (grp === 'Start') h += '<a class="tile" href="#/map"><span class="t-ico">🗺️</span><b>Interactive Map</b><span>Every pin in the guide on one map of Leonida.</span></a>';
       h += '</div>';
     });
@@ -267,18 +272,26 @@
     $('#allOn').addEventListener('click', () => setAll(true));
     $('#allOff').addEventListener('click', () => setAll(false));
 
+    const place = params.get('place');
+    if (place && G.places[place]) {
+      const p = G.places[place], ll = toLL(p.x, p.y);
+      const mk = L.marker(ll, { icon: L.divIcon({ className:'', html:'<div class="pin big"></div>', iconSize:[22,22], iconAnchor:[11,11] }) }).addTo(map)
+        .bindPopup('<b>' + esc(place) + '</b>' + (p.approx ? '<br><small style="color:#b9a6cc">approximate</small>' : ''));
+      setTimeout(() => { map.invalidateSize(); map.setView(ll, -0.5, { animate:false }); mk.openPopup(); }, 150);
+    }
     const focus = params.get('focus');
     if (focus && markerById[focus]) {
       const { mk, sec } = markerById[focus];
       groups[sec].addTo(map);
       const cb = document.querySelector('[data-l="' + sec + '"]'); if (cb) cb.checked = true;
       setTimeout(() => { map.invalidateSize(); map.setView(mk.getLatLng(), -0.5, { animate:false }); mk.openPopup(); }, 150);
-    } else setTimeout(() => map.invalidateSize(), 50);
+    } else if (!place) setTimeout(() => map.invalidateSize(), 50);
     window.scrollTo(0, 0);
   }
 
   /* ---------- global search ---------- */
   const gs = $('#globalSearch'), sr = $('#searchResults');
+  const dbIndex = window.DBUI ? DBUI.searchIndex() : [];
   let active = -1;
   function search(q) {
     const terms = q.toLowerCase().split(/\s+/).filter(Boolean);
@@ -294,6 +307,12 @@
     sections.forEach(s => {
       if (terms.every(t => s.title.toLowerCase().includes(t))) res.push({ sec: s, score: 20 });
     });
+    dbIndex.forEach(d => {
+      if (!terms.every(t => d.t.includes(t))) return;
+      const nm = d.n.toLowerCase(); let score = 0;
+      terms.forEach(t => { score += nm.startsWith(t) ? 7 : nm.includes(t) ? 4 : 1; });
+      res.push({ db: d, score });
+    });
     return res.sort((a, b) => b.score - a.score).slice(0, 40);
   }
   function showResults() {
@@ -303,8 +322,10 @@
     active = -1;
     if (!res.length) { sr.innerHTML = '<div class="sr-empty">No results for “' + esc(q) + '”.</div>'; sr.hidden = false; return; }
     const by = {};
-    res.forEach(r => { const k = r.sec ? 'Sections' : r.it.sec.title; (by[k] = by[k] || []).push(r); });
-    sr.innerHTML = Object.entries(by).map(([k, arr]) => '<div class="sr-group">' + esc(k) + '</div>' + arr.map(r => r.sec
+    res.forEach(r => { const k = r.sec ? 'Sections' : r.db ? r.db.group : r.it.sec.title; (by[k] = by[k] || []).push(r); });
+    sr.innerHTML = Object.entries(by).map(([k, arr]) => '<div class="sr-group">' + esc(k) + '</div>' + arr.map(r => r.db
+      ? '<a class="sr-item" href="' + r.db.href + '">' + esc(r.db.n) + '<small>' + esc(r.db.s) + '</small></a>'
+      : r.sec
       ? '<a class="sr-item" href="#/s/' + r.sec.id + '">' + r.sec.icon + ' ' + esc(r.sec.title) + '<small>' + esc(strip(r.sec.blurb)) + '</small></a>'
       : '<a class="sr-item" href="#/s/' + r.it.sec.id + '?focus=' + encodeURIComponent(r.it.id) + '">' + esc(r.it.n) + '<small>' + esc([r.it.group.name, r.it.s].filter(Boolean).join(' · ')) + '</small></a>').join('')).join('');
     sr.hidden = false;
@@ -342,6 +363,10 @@
     if (path !== 'map' && map) { map.remove(); map = null; }
     if (!path) { renderHome(); markNav(''); document.title = 'Leonida Field Guide · Unofficial GTA VI Companion'; return; }
     if (path === 'map') { renderMap(params); markNav('map'); document.title = 'Map · Leonida Field Guide'; return; }
+    let d = path.match(/^db\/(vehicles|weapons)$/);
+    if (d && window.DBUI) { DBUI.list(d[1], params); markNav('db/' + d[1]); document.title = DBUI.KIND[d[1]].title + ' · Leonida Field Guide'; return; }
+    d = path.match(/^(v|w)\/([\w-]+)$/);
+    if (d && window.DBUI) { DBUI.item(d[1] === 'v' ? 'vehicles' : 'weapons', d[2]); markNav('db/' + (d[1] === 'v' ? 'vehicles' : 'weapons')); return; }
     const m = path.match(/^s\/([\w-]+)/);
     if (m && byId[m[1]]) { renderSection(byId[m[1]], params); markNav('s/' + m[1]); document.title = byId[m[1]].title + ' · Leonida Field Guide'; return; }
     renderHome(); markNav('');

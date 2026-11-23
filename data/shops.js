@@ -18,7 +18,7 @@
         s('This / That','Decor District, Ocean Beach (2), Waning Sands',[],{ at:'Decor District' }),
         s('Mid','Ocean Beach (2), Waning Sands',[],{ at:'Ocean Beach' }),
         s('Suburban, Urban Legendz, Drip Drops','Vice City',[],{ at:'La Perle', tip:'Drip Drops in La Perle holds a Sniper of La Perle playlist poster on its counter.' }),
-        s('Stock 305','Stockyard',['UE'],{ at:'Stockyard', d:'Exclusive streetwear for Jason and Lucia.' })
+        s('Stock 305','Stockyard',['UE'],{ at:'Stockyard', d:'Exclusive streetwear for Jason and Lucia.' , img:'shop-stock305' })
       ]},
       { name:'Clothing · Sportswear, Formal, Thrift', items:[
         s('Alpha Sports','Downtown, Ocean Beach (4), Waning Sands',[],{ at:'Ocean Beach' }),
@@ -34,7 +34,7 @@
         s('Lori Scott Hair & Beauty, Hair By Clair','Mariana County',[],{ at:'Mariana County' }),
         s('Kurt’s Barber Shop, Salon Pérez, Crosstown Cutz, Clip & Fade','Barbers · Vice City',[],{ at:'Crosstown' }),
         s('AU Courant, Bellissima, Salon Belle, Fabiola’s, Onyx, Oomph!, Gabriel Wexler','Vice City salons',[],{ at:'Vice City' }),
-        s('Sara’s Unisex Salon','Signature styles, Jason facial hair, Lucia makeup and nails',['UE'],{ at:'Vice City' }),
+        s('Sara’s Unisex Salon','Signature styles, Jason facial hair, Lucia makeup and nails',['UE'],{ at:'Vice City' , img:'shop-sara' }),
         s('A Better You','Leonard County',[],{ at:'Leonard County' }),
         s('Pearl House, Captain Starlings Barber Shop','Kelly County',[],{ at:'Kelly County' })
       ]},
@@ -47,7 +47,7 @@
         s('Inkomplete Tattoo Co.','Old School · Vice City',[],{ at:'Vice City' }),
         s('Twa Ponya Tattoo','Neo-Traditional · La Perle',[],{ at:'La Perle', tip:'Sniper of La Perle poster on the table by the entrance.' }),
         s('Black Spot Tattoo','Geometric & Blackwork · Vice City',[],{ at:'Vice City' }),
-        s('Electric Fang Tattoo','New School · 50+ FAILE designs · Stockyard',['UE'],{ at:'Stockyard' }),
+        s('Electric Fang Tattoo','New School · 50+ FAILE designs · Stockyard',['UE'],{ at:'Stockyard' , img:'shop-fang' }),
         s('Blood Sugar Tattoo','Lettering · Kelly County',[],{ at:'Kelly County' }),
         s('Freedom Tattoo','Stick & Poke · Kelly County',[],{ at:'Kelly County' })
       ]},

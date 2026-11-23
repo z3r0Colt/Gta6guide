@@ -7,6 +7,9 @@
     trackable: true,
     filters: [{ key:'UE', label:'Ultimate / Pre-order' }, { key:'unique', label:'Unique variant' }],
     before: [
+      { kind:'good', title:'Looking for one specific gun?', items:[
+        'The <a href="#/db/weapons"><b>Weapon Database</b></a> has a page for every weapon and unique variant, with stats, price, where to buy it, attachments and variants.'
+      ]},
       { kind:'warn', title:'How owning a gun works', items:[
         '<b>Owned</b> (light-blue icon) means you bought it at a gun store. Both characters can use it but each one keeps their own mods.',
         '<b>Unowned</b> (white icon) means you picked it up. You cannot mod it and you lose it when you die, get busted or load a save. Put it in your own car’s trunk to hold it a while.',
@@ -29,7 +32,7 @@
         w('Duke Arms 1922','M1911-style heavy pistol',[]),
         w('Duke Arms Mustang .357','Python-style revolver',[]),
         w('Hawk & Little .38','Model 10-style revolver',[]),
-        w('Hawk & Little Morgan Revolver','Model 629-style magnum',['UE']),
+        w('Hawk & Little Morgan Revolver','Model 629-style magnum',['UE'],{ img:'morgan-1' }),
         w('Fairview Kalinga .50','Desert Eagle-style hand cannon',[]),
         w('Scorpio Akulus','Raging Hunter-style revolver',[]),
         w('Scorpio Nipper .38','Pocket pistol',[]),
@@ -94,9 +97,9 @@
         w('Killtelligence SM-69','',['unique'],{ d:'Reward from Bret’s Veteran Hunted.' }),
         w('Gutterball Moreland 850','Shotgun',['unique'],{ at:'Port Gellhorn', d:'On a table in the NE corner of Kingpin Bowling.' }),
         w('Donnie’s H&L .38','Revolver',['unique'],{ d:'From Donnie in Chapter 1.' }),
-        w('Duval & Caminos Signature pistols','ES9 for Jason, K17 for Lucia',['unique','UE']),
-        w('Hawk and Little Morgan revolvers','',['unique','UE']),
-        w('Tommy Vercetti Micro SMG skin','',['UE'],{ d:'Pre-order bonus.' }),
+        w('Duval & Caminos Signature pistols','ES9 for Jason, K17 for Lucia',['unique','UE'],{ img:'signature-pistols' }),
+        w('Hawk and Little Morgan revolvers','',['unique','UE'],{ img:'morgan-2' }),
+        w('Tommy Vercetti Micro SMG skin','',['UE'],{ d:'Pre-order bonus.' , img:'vercetti-pattern' }),
         w('Gang-themed variants','Kingfishers, Kolts, San4San, Guardia Brothers, La Polilla Negra, PTT Youngin$, Final Chapter',['unique'],{ d:'Found inside that gang’s Illegal Operations.' }),
         w('Store variants','Woodhatch Longshot, Iron & Oak WCR-1, Black Eagle Import Kalinga and M306 TMR',['unique','rep'],{ d:'Names match their gun stores. Check that store’s counter.' }),
         w('Mason & Keen Shortstraw (explosive)','Cheat unlock',[],{ d:'Hit 100 enemies with explosives after the story.' })

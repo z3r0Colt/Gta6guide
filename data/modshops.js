@@ -22,7 +22,7 @@
         s('Euroform Automotive','Vice City','Luxury cars','Custom parts and high-end cosmetics',{ at:'Vice City' }),
         s('Vice Auto Customs','Vice City','Tuners','Custom parts and street-racing cosmetics',{ at:'Vice City' }),
         s('Lowballers Customs','Vice City','Lowriders','Custom rims, wheel designs and interiors for classic sedans',{ at:'Vice City' }),
-        s('Rideout Customs','Vice City','Donks','Big custom rims, detailed interiors and donk builds',{ at:'Vice City', b:['Donks','UE'] }),
+        s('Rideout Customs','Vice City','Donks','Big custom rims, detailed interiors and donk builds',{ at:'Vice City', b:['Donks','UE'] , img:'shop-rideout' }),
         s('Vice Vinyl','Vice City','Any vehicle','Vinyl wraps and liveries only. No performance work.',{ at:'Vice City' }),
         s('Stockyard Speedshop','Stockyard','Hot rods','Custom parts and old-school cosmetics',{ at:'Stockyard' })
       ]},
@@ -32,7 +32,7 @@
         s('Wasteland Off-Road','Kelly County','Off-road','Custom parts and all-terrain cosmetics',{ at:'Kelly County' })
       ]},
       { name:'Leonard & Lummox Counties', items:[
-        s('One-Eyed Willie’s Auto Shop','Lake Leonida, Leonard County','Off-road','Hand-painted liveries and off-road mods',{ at:'Lake Leonida', b:['Off-road','UE'] }),
+        s('One-Eyed Willie’s Auto Shop','Lake Leonida, Leonard County','Off-road','Hand-painted liveries and off-road mods',{ at:'Lake Leonida', b:['Off-road','UE'] , img:'shop-willie' }),
         s('Ledford Motorcycle Workshop','Lummox County','Choppers','Classic American bikes. Repairs, performance and custom cosmetics.',{ at:'Lummox County' })
       ]}
     ],

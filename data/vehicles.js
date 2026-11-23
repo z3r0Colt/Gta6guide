@@ -8,6 +8,10 @@
     trackable: true,
     filters: [{ key:'UE', label:'Ultimate Edition' }, { key:'wanted', label:'Gets you wanted' }],
     before: [
+      { kind:'good', title:'Looking for one specific vehicle?', items:[
+        'The <a href="#/db/vehicles"><b>Vehicle Database</b></a> has a page for every car, bike, boat and aircraft, with stats, price, where to find it, mods and variants.',
+        'This page covers the rules for keeping cars and the rare finds worth hunting.'
+      ]},
       { kind:'warn', title:'How keeping a car works', items:[
         'Stolen cars are lost when you leave, wreck or quit unless you <b>register</b> them. Parking in a garage alone does not register a car.',
         'Moses in Port Gellhorn registers your first car free in Chapter 2. From Chapter 3 any Pay ’n’ Spray registers cars. Fees run from $100 up to $17,000+ for high-end cars.',
@@ -45,9 +49,9 @@
         v('Lapwing Mallard, 300-H, Streamer 216-C, Mammatus','Light planes at small airfields',[])
       ]},
       { name:'Boats', items:[
-        v('Crest Kayak','Behind Jason’s house',[],{ at:'Key Lento' }),
+        v('Crest Kayak','Behind Jason’s house',[],{ at:'Key Lento' , img:'kayak' }),
         v('Lure Predator L35P','Moored at Trinity Apartments, Washington Island',[],{ at:'Washington Beach' }),
-        v('Shitzu Squalo','Speedboat · canal south of Washington Beach by the Y Hotel',['UE'],{ at:'Ocean Beach', tip:'Unlocks in Chapter 4 under the Personal tab of the map index.' }),
+        v('Shitzu Squalo','Speedboat · canal south of Washington Beach by the Y Hotel',['UE'],{ at:'Ocean Beach', tip:'Unlocks in Chapter 4 under the Personal tab of the map index.' , img:'squalo-1' }),
         v('Airboat 09','Grassrivers rentals and docks',[],{ at:'Grassrivers' }),
         v('Bombora S23 CCS','Mission reward',[]),
         v('Seashark Azure / Hydroblast / Sedna','Jet skis at beaches and marinas',[]),
@@ -55,11 +59,11 @@
         v('Speedboats','Clarion, Nagasaki Tao, Speeder 700 GT, Dingus Como',[])
       ]},
       { name:'Rare & standout cars', note:'One-offs at fixed spots. Bring the Key Cloner for garages.', items:[
-        v('’67 Vapid Dominator Buggy','Grassrivers garage, a day after Thrillbillies',[],{ at:'Grassrivers', d:'Also a prize for winning a dirt track race at the Mud Club.' }),
-        v('’55 Vapid Stanier','Roadside by the Ocean View Hotel, Ocean Beach',[],{ at:'Ocean Beach', d:'After Welcome to Vice City. Bonita Court is the nearest garage.' }),
-        v('’95 Grotti Cheetah','Pegassi Residences underground lot, Tequesta Retreat',['UE'],{ at:'Tequesta Retreat', d:'After Operation Savage Glory. Ramp left of the lobby entrance.' }),
-        v('Dinka Enduro','Army green bike under Jason’s house',[],{ at:'Key Lento' }),
-        v('’70 Vapid Ganado','Jason’s pickup',[],{ at:'Key Lento' }),
+        v('’67 Vapid Dominator Buggy','Grassrivers garage, a day after Thrillbillies',[],{ at:'Grassrivers', d:'Also a prize for winning a dirt track race at the Mud Club.' , img:'buggy-1' }),
+        v('’55 Vapid Stanier','Roadside by the Ocean View Hotel, Ocean Beach',[],{ at:'Ocean Beach', d:'After Welcome to Vice City. Bonita Court is the nearest garage.' , img:'stanier-1' }),
+        v('’95 Grotti Cheetah','Pegassi Residences underground lot, Tequesta Retreat',['UE'],{ at:'Tequesta Retreat', d:'After Operation Savage Glory. Ramp left of the lobby entrance.' , img:'cheetah-1' }),
+        v('Dinka Enduro','Army green bike under Jason’s house',[],{ at:'Key Lento' , img:'enduro' }),
+        v('’70 Vapid Ganado','Jason’s pickup',[],{ at:'Key Lento' , img:'ganado-retro' }),
         v('Grady’s Vapid Slamvan','MacAlister Gold Mine, Moreau',[],{ at:'Moreau' }),
         v('Beer Monster Vapid Marshall','Monster truck at the Thrillbilly Mud Club, Frogswater',[],{ at:'Mud Club' }),
         v('Emperor Sultan','Gift from Moses after all 7 drop-offs',[],{ at:'Port Gellhorn' }),
@@ -103,9 +107,9 @@
         v('Gallivanter Baller ST-D','Outside Vice Beach and Ocean Beach hotels',[],{ at:'Ocean Beach' })
       ]},
       { name:'Wyman’s Classic Cars', note:'Ultimate Edition. Scan wrecks with WAiNK, pay Wyman, collect at his scrapyard. Tracked under Exploration > Find Cars for Wyman.', items:[
-        v('’67 Dominator Buggy','Starts the chain',['UE']),
-        v('’67 Transgressor','3 wrecks around Port Gellhorn · $1,500',['UE'],{ at:'Port Gellhorn', d:'Pig field. Tanglewood Ln trailer park north of Sarena’s Bargain Store. Garage behind the blue sunflower house on Gellhorn Ave. Behind the wooden hut below Dirt Merchants at the south tip of town.', tip:'Register at a Pay ’n’ Spray ($100) or park it in a garage or it goes back to salvage.' }),
-        v('Reynolds Kit Car','5 purple W wrecks',['UE']),
+        v('’67 Dominator Buggy','Starts the chain',['UE'],{ img:'buggy-2' }),
+        v('’67 Transgressor','3 wrecks around Port Gellhorn · $1,500',['UE'],{ at:'Port Gellhorn', d:'Pig field. Tanglewood Ln trailer park north of Sarena’s Bargain Store. Garage behind the blue sunflower house on Gellhorn Ave. Behind the wooden hut below Dirt Merchants at the south tip of town.', tip:'Register at a Pay ’n’ Spray ($100) or park it in a garage or it goes back to salvage.' , img:'transgressor' }),
+        v('Reynolds Kit Car','5 purple W wrecks',['UE'],{ img:'reynolds' }),
         v('’70 Vapid Riata, ’64 Declasse Mamba GT, ’72 Schyster Deviant','The rest of the set',['UE'])
       ]},
       { name:'Quickest picks', note:'Speed ratings from in-game stats, out of 10.', items:[

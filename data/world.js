@@ -6,7 +6,7 @@
     id: 'leonida', title: 'Leonida Regions', icon: '🌴', nav: 'Start',
     blurb: 'The state of Leonida, Rockstar’s take on Florida. Six named regions spread over five counties.',
     groups: [
-      { name:'Regions', items: G.regions.map(r => x(r.name, G.counties.find(c => c.id === r.county).name, [], { d: r.blurb, at: r.name === 'Leonida Keys' ? 'Key Lento' : (r.name === 'Mount Kalaga' ? 'Mount Kalaga' : r.name) })) },
+      { name:'Regions', items: G.regions.map(r => x(r.name, G.counties.find(c => c.id === r.county).name, [], { d: r.blurb, img: 'region-' + ({ 'vice-city':'vice-city', keys:'keys', grassrivers:'grassrivers', 'port-gellhorn':'port-gellhorn', ambrosia:'ambrosia', kalaga:'kalaga' })[r.id], at: r.at })) },
       { name:'Counties', note:'From in-game road signs. Rockstar has not published a county map.', items: G.counties.map(c => x(c.name, '', [], { d: c.note })) }
     ]
   });
@@ -16,12 +16,12 @@
     blurb: 'Who is who, and what each contact is good for.',
     groups: [
       { name:'Main', items:[
-        x('Jason Duval','Protagonist',['J']), x('Lucia Caminos','Protagonist',['L'])
+        x('Jason Duval','Protagonist',['J'],{ img:'char-jason' }), x('Lucia Caminos','Protagonist',['L'],{ img:'char-lucia' })
       ]},
       { name:'Useful contacts', items:[
-        x('Brian Heder','Key Lento landlord and Chapter 1 fence',[],{ at:'South Key Lento' }),
+        x('Brian Heder','Key Lento landlord and Chapter 1 fence',[],{ at:'South Key Lento' , img:'char-brian' }),
         x('Donnie','Chapter 1 fence and smuggling pilot',[],{ at:'South Key Lento' }),
-        x('Cal','Jason’s buddy. Fishing bets and bar trips.',[],{ at:'Key Lento' }),
+        x('Cal','Jason’s buddy. Fishing bets and bar trips.',[],{ at:'Key Lento' , img:'char-cal' }),
         x('Kenton','Shipwreck treasure hunter',[]),
         x('Moses','Port Gellhorn car fence. Registers cars.',[],{ at:'Port Gellhorn' }),
         x('Dunk','Port Gellhorn fence and robbery tipster',[],{ at:'Port Gellhorn' }),
@@ -29,19 +29,20 @@
         x('Bret Vogel','Hunting mentor',[],{ at:'Mount Kalaga' }),
         x('Kyle','Strange farmer at McKittrick Farm',[],{ at:'McKittrick Farm' }),
         x('Kirk','Skunk Ape hunter',[],{ at:'Pelican Valley' }),
-        x('Wyman','Fixer and classic car restorer (Ultimate)',['UE']),
-        x('Boobie Ike','Runs the Jack of Hearts club',[],{ at:'Crosstown' }),
-        x('Dre’Quan Priest','Jason’s Vice City contact',[]),
+        x('Wyman','Fixer and classic car restorer (Ultimate)',['UE'],{ img:'wyman' }),
+        x('Boobie Ike','Runs the Jack of Hearts club',[],{ at:'Crosstown' , img:'char-boobie' }),
+        x('Dre’Quan Priest','Jason’s Vice City contact',[],{ img:'char-drequan' }),
         x('Tyrone','Best narcotics fence. Kitty Litter labs.',[],{ at:'La Perle' }),
         x('Yasmani','Jewelry and bank tips. Best for jewelry and marked bills.',[],{ at:'Little Cuba' }),
         x('Randy','High-end car buyer. Wish list.',[],{ at:'Vice City' }),
-        x('Raul Bautista','Veteran bank robber. Runs the big heists.',[]),
+        x('Raul Bautista','Veteran bank robber. Runs the big heists.',[],{ img:'char-raul' }),
         x('Yago','Street racer',[],{ at:'Salton' }),
         x('Andy','Cellerica recruiter (Lucia)',[],{ at:'Belville' }),
         x('Abe Gonzalez','Lawyer at Lucretia Law Group',[]),
         x('Pilot Pete','Air deliveries (Jason)',[],{ at:'Wild Hog Point' }),
         x('Eddie Acosta','Party host. Do not pay him.',[]),
-        x('Real Dimez, Cal Hampton, Lori Heder, Mandy, Valentina, Mattia, Andrea, Petra Navarro','Other story faces',[])
+        x('Real Dimez','Dre\u2019Quan\u2019s rap group',[],{ img:'char-dimez' }),
+        x('Lori Heder, Mandy, Valentina, Mattia, Andrea, Petra Navarro','Other story faces',[])
       ]}
     ]
   });
