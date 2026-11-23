@@ -1,0 +1,25 @@
+# Leonida Field Guide
+
+An unofficial, fan-made GTA VI companion. Static site, no build step. Built for GitHub Pages.
+
+## What is in it
+Story missions, Strangers & side quests, activities, random encounters, money methods, fences, gangs,
+cars/boats/planes, mod shops, weapons, gun stores, shops, garages & safehouses, collectibles, trophies,
+the 100% checklist, challenges, cheats, glitches, secrets, radio, characters, editions and an interactive map.
+
+Checklist ticks are saved in your browser (localStorage).
+
+## Run locally
+```
+python3 -m http.server 8000
+```
+Then open http://localhost:8000.
+
+## Host on GitHub Pages
+Settings → Pages → Build and deployment → Source: **Deploy from a branch** → pick the branch and `/ (root)`.
+
+## Editing content
+All content lives in `data/*.js`. Each file calls `G.add({...})` with groups of items.
+Item fields: `n` name, `s` subtitle, `b` badges, `d` description (HTML ok), `steps`, `tip`, `warn`, `kv`, and `at` (a place name from `data/regions.js` that puts a pin on the map).
+
+Not affiliated with Rockstar Games or Take-Two Interactive.
