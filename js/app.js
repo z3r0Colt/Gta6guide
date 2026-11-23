@@ -83,6 +83,7 @@
   /* ---------- badges / cards ---------- */
   function badge(b) {
     if (/^\$/.test(b)) return '<span class="badge money">' + esc(b) + '</span>';
+    if (/^#/.test(b)) return '<span class="codebadge">' + esc(b.slice(1)) + '</span>';
     const m = BADGE[b];
     return m ? '<span class="badge ' + m[0] + '">' + esc(m[1]) + '</span>' : '<span class="badge">' + esc(b) + '</span>';
   }
@@ -198,7 +199,8 @@
         'Free helicopter at the Southwind private dock.',
         'Save $100,000 in Family Savings for 20% off every garage.',
         'Sell drugs to Tyrone and jewelry to Yasmani for top dollar.',
-        'Bank vaults after That’s Where The Money Is are the biggest payday.'
+        'Bank vaults after That’s Where The Money Is are the biggest payday.',
+        'Every known safe and keypad code is on the <a href="#/s/codes">Safe & Keypad Codes</a> page.'
       ]}) + '</div>';
     NAV_ORDER.forEach(grp => {
       const secs = sections.filter(s => s.nav === grp);

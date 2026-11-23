@@ -277,6 +277,9 @@ code,.code{font:600 13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;ba
 .card-img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
 @media (max-width:820px){.itemhead{grid-template-columns:1fr}.sb{grid-template-columns:110px 1fr 32px}}
 
+/* codes */
+.codebadge{display:inline-block;font:700 22px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:4px;color:#2a0717;background:var(--grad);padding:4px 12px;border-radius:10px;box-shadow:0 4px 14px rgba(255,63,142,.3)}
+
 /* misc */
 .pill-row{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 16px}
 .src{font-size:12px;color:var(--muted);margin-top:8px}
