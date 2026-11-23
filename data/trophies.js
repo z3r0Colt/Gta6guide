@@ -84,7 +84,7 @@
 
   const r = (n, need, extra) => Object.assign({ n, s: need, b: [] }, extra || {});
   G.add({
-    id: 'hundred', title: '100% Checklist', icon: '✅', nav: 'Completion',
+    id: 'hundred', title: '100% Requirements', icon: '✅', nav: 'Completion',
     blurb: 'Everything A Long Road needs. Nothing here is missable and all of it can be done after the credits.',
     trackable: true,
     groups: [

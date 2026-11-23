@@ -30,22 +30,27 @@
     get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   };
-  let done = store.get('lfg-done', {});
-  const isDone = id => !!done[id];
-  const setDone = (id, v) => { if (v) done[id] = 1; else delete done[id]; store.set('lfg-done', done); };
 
   /* ---------- normalize data ---------- */
   const sections = G.sections;
   const byId = {};
   const allItems = [];
+  const walkKey = n => strip(n).toLowerCase().replace(/[\u2018\u2019']/g, "'").trim();
+  const walk = {};
+  Object.keys(G.walk || {}).forEach(k => { walk[walkKey(k)] = G.walk[k]; });
   sections.forEach(sec => {
     byId[sec.id] = sec;
     sec.count = 0;
     (sec.groups || []).forEach(g => {
       (g.items || []).forEach((it, idx) => {
+        const w = (sec.id === 'missions' || sec.id === 'strangers') && walk[walkKey(it.n)];
+        if (w) Object.keys(w).forEach(k => {
+          if ((k === 'tip' || k === 'warn' || k === 'd') && it[k] && it[k] !== w[k]) it[k] = it[k] + ' ' + w[k];
+          else if (!it[k] || k === 'steps' || k === 'start' || k === 'reward') it[k] = w[k];
+        });
         it.id = sec.id + ':' + slug(g.name) + ':' + slug(it.n) + (it.n ? '' : idx);
         it.sec = sec; it.group = g;
-        it.text = [it.n, it.s, strip(it.d), it.tip, it.warn, (it.steps || []).join(' '), it.unlock, g.name,
+        it.text = [it.n, it.s, strip(it.d), it.tip, it.warn, it.start, it.reward, (it.steps || []).join(' '), it.unlock, g.name,
           it.kv ? Object.values(it.kv).join(' ') : '', (it.b || []).map(b => (BADGE[b] ? BADGE[b][1] : b)).join(' ')].join(' ').toLowerCase();
         sec.count++;
         allItems.push(it);
@@ -89,60 +94,36 @@
   function placeOf(it) { return it.at && G.places[it.at] ? G.places[it.at] : null; }
 
   function cardHTML(it, opts) {
-    const sec = it.sec, track = sec.trackable, d = isDone(it.id), num = opts && opts.num;
+    const sec = it.sec, num = opts && opts.num;
     let body = '';
     if (sec.type === 'cheats') {
       body += '<dl class="kv"><dt>Unlock</dt><dd>' + esc(it.unlock) + '</dd></dl>';
       if (it.conflict) body += '<div class="tipline">Sources differ. ' + esc(it.conflict) + '.</div>';
     }
+    if (it.start) body += '<p class="start"><b>Starts</b> ' + it.start + '</p>';
     if (it.d) body += '<p>' + it.d + '</p>';
     if (it.kv) body += '<dl class="kv">' + Object.entries(it.kv).map(([k, v]) => '<dt>' + esc(k) + '</dt><dd>' + esc(v) + '</dd>').join('') + '</dl>';
     if (it.steps) body += '<ol>' + it.steps.map(s => '<li>' + s + '</li>').join('') + '</ol>';
+    if (it.reward) body += '<p class="reward"><b>Reward</b> ' + it.reward + '</p>';
     if (it.tip) body += '<div class="tipline">' + it.tip + '</div>';
     if (it.warn) body += '<div class="warnline">' + it.warn + '</div>';
     const pl = placeOf(it);
-    if (pl || opts.searchHit) {
-      body += '<div class="c-actions">' + (pl ? '<a class="btn sm" href="#/map?focus=' + encodeURIComponent(it.id) + '">📍 Show on map</a>' : '') +
-        (opts.searchHit ? '<a class="btn sm" href="#/s/' + sec.id + '?focus=' + encodeURIComponent(it.id) + '">Open in ' + esc(sec.title) + '</a>' : '') + '</div>';
-    }
-    const hasBody = !!body;
-    const sub = sec.type === 'cheats' ? it.s : it.s;
-    return '<div class="card' + (track ? '' : ' nocheck') + (d ? ' done' : '') + '" id="c-' + esc(it.id) + '" data-id="' + esc(it.id) + '">' +
-      '<div class="c-top"' + (hasBody ? '' : ' style="cursor:default"') + '>' +
-        (track ? '<button class="c-check' + (d ? ' on' : '') + '" aria-label="Mark done" aria-pressed="' + d + '"></button>' : '') +
-        '<div class="c-main"><div class="c-name">' + (num ? '<span class="c-num">' + num + '</span>' : '') + esc(it.n) + '</div>' +
-          (sub ? '<div class="c-sub">' + esc(sub) + '</div>' : '') +
-          (it.b && it.b.length ? '<div class="c-badges">' + it.b.map(badge).join('') + '</div>' : '') +
-          (sec.type === 'cheats' && it.code ? '<div class="c-badges">' + codeHTML(it.code) + '</div>' : '') +
-        '</div>' +
-        (hasBody ? '<svg class="c-caret" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>' : '') +
-      '</div>' + (hasBody ? '<div class="c-body">' + body + '</div>' : '') + '</div>';
+    if (pl) body += '<div class="c-actions"><a class="btn sm" href="#/map?focus=' + encodeURIComponent(it.id) + '">📍 ' + esc(it.at) + ' on the map</a></div>';
+    return '<article class="card' + (body ? '' : ' slim') + '" id="c-' + esc(it.id) + '">' +
+      '<div class="c-top"><div class="c-main"><h4 class="c-name">' + (num ? '<span class="c-num">' + num + '</span>' : '') + esc(it.n) + '</h4>' +
+        (it.s ? '<div class="c-sub">' + esc(it.s) + '</div>' : '') +
+        ((it.b && it.b.length) || (sec.type === 'cheats') ? '<div class="c-badges">' + (it.b || []).map(badge).join('') + (sec.type === 'cheats' ? codeHTML(it.code) : '') + '</div>' : '') +
+      '</div></div>' + (body ? '<div class="c-body">' + body + '</div>' : '') + '</article>';
   }
 
   function calloutHTML(c) {
     return '<div class="callout ' + (c.kind || '') + '"><h4>' + esc(c.title) + '</h4><ul>' + c.items.map(i => '<li>' + i + '</li>').join('') + '</ul></div>';
   }
 
-  function bindCards(root) {
-    root.addEventListener('click', e => {
-      const chk = e.target.closest('.c-check');
-      if (chk) {
-        e.stopPropagation();
-        const card = chk.closest('.card'), id = card.dataset.id, v = !isDone(id);
-        setDone(id, v);
-        chk.classList.toggle('on', v); chk.setAttribute('aria-pressed', v); card.classList.toggle('done', v);
-        updateProgress();
-        return;
-      }
-      const top = e.target.closest('.c-top');
-      if (top && top.nextElementSibling) top.parentElement.classList.toggle('open');
-    });
-  }
-
   /* ---------- section page ---------- */
   let current = null;
   function renderSection(sec, params) {
-    const state = { q: params.get('q') || '', f: new Set(), hide: store.get('lfg-hide-' + sec.id, false) };
+    const state = { q: params.get('q') || '', f: new Set() };
     const app = $('#app');
     let h = '<div class="page-head"><div class="kicker">' + esc(sec.nav) + '</div><h1 class="title"><span class="h-ico">' + sec.icon + '</span><span class="h-txt">' + esc(sec.title) + '</span></h1>' +
       '<p class="lede">' + sec.blurb + '</p></div>';
@@ -152,10 +133,7 @@
     if (sec.groups.length > 1) sec.groups.forEach(g => chips.push({ key:'g:' + g.name, label:g.name }));
     (sec.filters || []).forEach(f => chips.push({ key:'b:' + f.key, label:f.label }));
     if (chips.length) h += '<div class="chips">' + chips.map(c => '<button class="chip" data-k="' + esc(c.key) + '">' + esc(c.label) + '</button>').join('') + '</div>';
-    if (sec.trackable) h += '<label class="toggle"><input type="checkbox" id="hideDone"' + (state.hide ? ' checked' : '') + '> Hide completed</label>';
     h += '</div>';
-    if (sec.trackable) h += '<div class="progress"><div class="bar"><i id="pbar"></i></div><b id="ptxt"></b>' +
-      '<button class="btn sm" id="resetSec" title="Clear ticks in this section">Reset</button></div>';
     h += '<div id="groups"></div>';
     if (sec.after) h += '<p class="map-note">' + esc(sec.after) + '</p>';
     if (sec.src) h += '<p class="src">Compiled from: ' + sec.src.map(esc).join(' · ') + '</p>';
@@ -169,7 +147,6 @@
       sec.groups.forEach(g => {
         if (gf.length && !gf.includes(g.name)) return;
         const items = g.items.filter((it, i) => {
-          if (state.hide && sec.trackable && isDone(it.id)) return false;
           if (bf.length && !bf.every(b => (it.b || []).includes(b))) return false;
           return terms.every(t => it.text.includes(t));
         });
@@ -178,15 +155,13 @@
         const numbered = sec.id === 'missions';
         out += '<section class="group"><div class="group-head"><h3>' + esc(g.name) + '</h3><small>' + items.length + '</small></div>' +
           (g.note ? '<p class="group-note">' + esc(g.note) + '</p>' : '') +
-          '<div class="cards' + (numbered || sec.type === 'cheats' ? ' list' : '') + '">' +
+          '<div class="cards' + (sec.layout === 'grid' ? '' : ' list') + '">' +
           items.map(it => cardHTML(it, { num: numbered ? (g.items.indexOf(it) + 1) : 0 })).join('') + '</div></section>';
       });
       $('#groups').innerHTML = out || '<div class="empty">Nothing matches. Try clearing a filter.</div>';
     };
     current = { sec, draw };
     draw();
-    updateProgress();
-    bindCards($('#groups'));
 
     $('#secSearch').addEventListener('input', e => { state.q = e.target.value; draw(); });
     app.querySelectorAll('.chip').forEach(ch => ch.addEventListener('click', () => {
@@ -194,41 +169,19 @@
       if (state.f.has(k)) state.f.delete(k); else state.f.add(k);
       ch.classList.toggle('on'); draw();
     }));
-    const hd = $('#hideDone');
-    if (hd) hd.addEventListener('change', e => { state.hide = e.target.checked; store.set('lfg-hide-' + sec.id, state.hide); draw(); });
-    const rs = $('#resetSec');
-    if (rs) rs.addEventListener('click', () => {
-      if (!confirm('Clear every tick in ' + sec.title + '?')) return;
-      allItems.filter(i => i.sec === sec).forEach(i => setDone(i.id, false));
-      draw(); updateProgress();
-    });
-
     const focus = params.get('focus');
     if (focus) {
       const el = document.getElementById('c-' + focus);
-      if (el) { el.classList.add('open', 'hl'); setTimeout(() => el.scrollIntoView({ behavior:'smooth', block:'center' }), 60); }
+      if (el) { el.classList.add('hl'); setTimeout(() => el.scrollIntoView({ behavior:'smooth', block:'center' }), 60); }
     } else window.scrollTo(0, 0);
-  }
-
-  function updateProgress() {
-    if (!current || !current.sec.trackable) return;
-    const items = allItems.filter(i => i.sec === current.sec);
-    const n = items.filter(i => isDone(i.id)).length, pct = items.length ? Math.round(n / items.length * 100) : 0;
-    const bar = $('#pbar'), txt = $('#ptxt');
-    if (bar) bar.style.width = pct + '%';
-    if (txt) txt.textContent = n + ' / ' + items.length + ' · ' + pct + '%';
   }
 
   /* ---------- home ---------- */
   function renderHome() {
     current = null;
-    const tracked = sections.filter(s => s.trackable);
-    const tot = tracked.reduce((a, s) => a + s.count, 0);
-    const got = allItems.filter(i => i.sec.trackable && isDone(i.id)).length;
     let h = '<section class="hero"><h1>Leonida<span>the ultimate field guide to GTA VI</span></h1>' +
       '<p>Missions, side quests, money, cars, mod shops, guns, shops, collectibles, cheats, glitches and secrets. All in one place with a map of the whole state. Press <kbd>/</kbd> anywhere to search.</p>' +
-      '<div class="cta"><a class="btn primary" href="#/map">🗺️ Open the map</a><a class="btn" href="#/s/missions">🎬 Mission checklist</a><a class="btn" href="#/s/money">💵 Get rich</a></div></section>';
-    h += '<div class="progress"><div class="bar"><i style="width:' + (tot ? Math.round(got / tot * 100) : 0) + '%"></i></div><b>Your checklist progress: ' + got + ' / ' + tot + '</b></div>';
+      '<div class="cta"><a class="btn primary" href="#/map">🗺️ Open the map</a><a class="btn" href="#/s/missions">🎬 Story walkthrough</a><a class="btn" href="#/s/money">💵 Get rich</a></div></section>';
     h += '<div class="callouts">' +
       calloutHTML({ kind:'warn', title:'Don’t lose stuff', items:[
         'No mission replay. Keep 2–3 manual saves.',
@@ -260,63 +213,52 @@
 
   /* ---------- map ---------- */
   let map = null;
-  const toLL = (x, y) => [1000 - y, x];
+  const toLL = (x, y) => [G.map.h - y, x];
   function renderMap(params) {
     current = null;
-    const layersOn = store.get('lfg-layers', null);
+    const layersOn = store.get('lfg-layers2', null);
     const pinSecs = sections.filter(s => s.groups.some(g => g.items.some(placeOf)));
-    let side = '<h4>Layers</h4><div class="chips" style="margin-bottom:8px"><button class="chip" id="allOn">All</button><button class="chip" id="allOff">None</button></div>';
+    let side = '<h4>Show on map</h4><div class="chips" style="margin-bottom:8px"><button class="chip" id="allOn">All</button><button class="chip" id="allOff">None</button></div>';
     pinSecs.forEach(s => {
       const n = allItems.filter(i => i.sec === s && placeOf(i)).length;
       const on = layersOn ? layersOn.includes(s.id) : true;
       side += '<label class="layer"><input type="checkbox" data-l="' + s.id + '"' + (on ? ' checked' : '') + '><span class="sw" style="background:' + (LAYER_COLORS[s.id] || '#fff') + '"></span>' + s.icon + ' ' + esc(s.title) + '<span class="n">' + n + '</span></label>';
     });
-    side += '<h4 style="margin-top:14px">Counties</h4>' + G.counties.map(c => '<div class="layer" style="cursor:default"><span class="sw" style="background:' + c.color + '"></span>' + esc(c.name) + '</div>').join('');
-    side += '<p class="map-note">Schematic map. Pins are placed by town or area from guide descriptions, not exact coordinates. Click a pin for details.</p>';
+    side += '<p class="map-note">Map © Rockstar Games, from the official Leonida map poster. Pins sit on the named town or spot. Hollow pins mark places the poster does not label, so they are close but not exact.</p>';
     $('#app').innerHTML = '<div class="page-head"><div class="kicker">Explore</div><h1 class="title"><span class="h-ico">🗺️</span><span class="h-txt">Leonida Map</span></h1>' +
-      '<p class="lede">Everything in the guide that has a location, on one map. Toggle layers in the panel. Tap a county for its overview. Pinch or scroll to zoom into Vice City.</p></div>' +
+      '<p class="lede">Rockstar’s official map of Leonida with every location from this guide pinned on it. Zoom in to read street-level labels. Tap a pin for the details.</p></div>' +
       '<div class="map-layout"><aside class="map-side">' + side + '</aside><div id="map"></div></div>';
 
     if (map) { map.remove(); map = null; }
-    map = L.map('map', { crs: L.CRS.Simple, minZoom: -1.2, maxZoom: 3, zoomSnap: 0.25, attributionControl: false });
-    const bounds = [[-60, -60], [1060, 1060]];
-    map.fitBounds([[0, 0], [1000, 1000]]);
-    map.createPane('labels'); map.getPane('labels').style.zIndex = 650; map.getPane('labels').style.pointerEvents = 'none';
-    map.setMaxBounds(bounds);
-
-    L.rectangle(bounds, { stroke:false, fillColor:'#0d3550', fillOpacity:1, interactive:false }).addTo(map);
-    L.polygon(G.land.map(p => toLL(p[0], p[1])), { color:'#f3d6a0', weight:3, opacity:.9, fillColor:'#2a5a3a', fillOpacity:1, interactive:false }).addTo(map);
-    G.counties.forEach(c => {
-      L.polygon(c.pts.map(p => toLL(p[0], p[1])), { color:c.color, weight:1.5, opacity:.6, dashArray:'4 6', fillColor:c.color, fillOpacity:.14 })
-        .bindPopup('<div class="pp-cat" style="color:' + c.color + '">County</div><b>' + esc(c.name) + '</b><br>' + esc(c.note))
-        .addTo(map);
-    });
-    [].concat(G.keys, G.islands).forEach(k => L.polygon(k.map(p => toLL(p[0], p[1])), { color:'#f3d6a0', weight:2, fillColor:'#2f6a44', fillOpacity:1, interactive:false }).addTo(map));
-    G.lakes.forEach(l => L.polygon(l.pts.map(p => toLL(p[0], p[1])), { color:'#5fb0d8', weight:1, fillColor:'#1a5a80', fillOpacity:1 }).bindTooltip(l.name).addTo(map));
-    G.regions.forEach(r => L.marker(toLL(r.at[0], r.at[1] - 26), { pane:'labels', interactive:false, icon: L.divIcon({ className:'region-label', html:esc(r.name), iconSize:null }) }).addTo(map));
-    ['Key Lento','Port Gellhorn','Ambrosia','Capri','Belville','Hamlet','Moreau','Grayson','Ocean Beach','Little Cuba','La Perle','Downtown','Watson Bay','Emerald Springs','Waning Sands','Southwind']
-      .forEach(n => { const p = G.places[n]; if (p) L.marker(toLL(p.x + 8, p.y - 8), { pane:'labels', interactive:false, icon: L.divIcon({ className:'town-label', html:esc(n), iconSize:null }) }).addTo(map); });
+    const W = G.map.w, H = G.map.h, bounds = [[0, 0], [H, W]];
+    map = L.map('map', { crs: L.CRS.Simple, minZoom: -3, maxZoom: 1.5, zoomSnap: 0.25, zoomDelta: 0.5, attributionControl: true });
+    map.attributionControl.setPrefix(false);
+    L.imageOverlay(G.map.src, bounds, { attribution: 'Map © Rockstar Games' }).addTo(map);
+    map.fitBounds(bounds);
+    map.setMinZoom(map.getZoom() - 0.25);
+    map.fitBounds([toLL(300, 3600), toLL(2560, 260)], { animate:false });
+    map.setMaxBounds([[-200, -200], [H + 200, W + 200]]);
 
     const groups = {}, markerById = {};
     pinSecs.forEach(s => {
       const lg = L.layerGroup();
       allItems.filter(i => i.sec === s && placeOf(i)).forEach(it => {
-        const p = placeOf(it), h = hash(it.id), countyLevel = /County$|^Vice City$/.test(it.at);
-        const r = countyLevel ? 22 : 7, a = (h % 360) * Math.PI / 180, dist = ((h >> 9) % 100) / 100 * r;
+        const p = placeOf(it), h = hash(it.id), wide = /County$/.test(it.at) || it.at === 'Vice City';
+        const r = wide ? 70 : 18, a = (h % 360) * Math.PI / 180, dist = (0.35 + ((h >> 9) % 65) / 100) * r;
         const ll = toLL(p.x + Math.cos(a) * dist, p.y + Math.sin(a) * dist);
         const col = LAYER_COLORS[s.id] || '#fff';
-        const mk = L.marker(ll, { icon: L.divIcon({ className:'', html:'<div class="pin" style="background:' + col + '"></div>', iconSize:[16,16], iconAnchor:[8,8] }), title: it.n });
+        const pin = p.approx || wide ? '<div class="pin hollow" style="border-color:' + col + '"></div>' : '<div class="pin" style="background:' + col + '"></div>';
+        const mk = L.marker(ll, { icon: L.divIcon({ className:'', html: pin, iconSize:[16,16], iconAnchor:[8,8] }), title: it.n });
         mk.bindPopup('<div class="pp-cat" style="color:' + col + '">' + s.icon + ' ' + esc(s.title) + '</div><b>' + esc(it.n) + '</b>' +
-          (it.s ? '<br>' + esc(it.s) : '') + '<br><small style="color:#b9a6cc">' + esc(it.at) + '</small>' +
-          '<br><a href="#/s/' + s.id + '?focus=' + encodeURIComponent(it.id) + '">Open details →</a>');
+          (it.s ? '<br>' + esc(it.s) : '') + '<br><small style="color:#b9a6cc">' + esc(it.at) + (p.approx ? ' · approximate' : wide ? ' · somewhere in this area' : '') + '</small>' +
+          '<br><a href="#/s/' + s.id + '?focus=' + encodeURIComponent(it.id) + '">Read the guide entry →</a>');
         mk.addTo(lg);
         markerById[it.id] = { mk, sec: s.id };
       });
       groups[s.id] = lg;
-      const on = layersOn ? layersOn.includes(s.id) : true;
-      if (on) lg.addTo(map);
+      if (layersOn ? layersOn.includes(s.id) : true) lg.addTo(map);
     });
-    const saveLayers = () => store.set('lfg-layers', [...document.querySelectorAll('[data-l]')].filter(i => i.checked).map(i => i.dataset.l));
+    const saveLayers = () => store.set('lfg-layers2', [...document.querySelectorAll('[data-l]')].filter(i => i.checked).map(i => i.dataset.l));
     document.querySelectorAll('[data-l]').forEach(cb => cb.addEventListener('change', () => {
       if (cb.checked) groups[cb.dataset.l].addTo(map); else map.removeLayer(groups[cb.dataset.l]);
       saveLayers();
@@ -330,10 +272,8 @@
       const { mk, sec } = markerById[focus];
       groups[sec].addTo(map);
       const cb = document.querySelector('[data-l="' + sec + '"]'); if (cb) cb.checked = true;
-      map.setView(mk.getLatLng(), 1.5);
-      setTimeout(() => mk.openPopup(), 200);
-    }
-    setTimeout(() => map.invalidateSize(), 50);
+      setTimeout(() => { map.invalidateSize(); map.setView(mk.getLatLng(), -0.5, { animate:false }); mk.openPopup(); }, 150);
+    } else setTimeout(() => map.invalidateSize(), 50);
     window.scrollTo(0, 0);
   }
 

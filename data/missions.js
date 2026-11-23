@@ -4,8 +4,8 @@
 (function(){
   const m = (n, s, b, extra) => Object.assign({ n, s: s || '', b: b || [] }, extra || {});
   G.add({
-    id: 'missions', title: 'Story Missions', icon: '🎬', nav: 'Story',
-    blurb: 'Every story mission in order across the Prologue and five chapters, with optional and missable jobs marked. Tick them off as you go. Your progress is saved in this browser.',
+    id: 'missions', title: 'Story Walkthrough', icon: '🎬', nav: 'Story',
+    blurb: 'Every story mission in order, from the Prologue through Chapter 5. Each one tells you where it starts, what to do, what you get and what you can miss.',
     trackable: true,
     filters: [
       { key:'J', label:'Jason only' }, { key:'L', label:'Lucia only' },
@@ -44,7 +44,7 @@
         m('Coming Home','Lucia’s release',[],{ tip:'Finish the free house repair jobs (steps, roof, wall, deck railing, punching bag) before this. They close once Lucia is home and she starts warmer if they are done.' }),
         m('Clean Up After Donnie','Donnie’s drop'),
         m('Buck Me','Set up a bank account'),
-        m('Down to Earth','Meet Brian',[],{ warn:'Next morning, talk to Lucia at the house and accept the balcony meditation. It is needed for Positive Mental Attitude and cannot be done after Chapter 1.' }),
+        m('Down to Earth','Meet Brian',[]),
         m('Deposit Cash Into BuckMe',''),
         m('Save for the Future','',[],{ tip:'Push cash into Family Savings. It is the only money that survives Chapter 1.' }),
         m('Find the Lost Drugs','Four swamp areas',['opt']),
@@ -56,7 +56,7 @@
         m('Don Gone','Head to Donnie’s trailer'),
         m('Donnie’s Lost Drugs','Boat sank off Corsair Key'),
         m('Recalibration','Talk to Lucia'),
-        m('Tourist Trap','Take up Mattia’s offer',['pnr'],{ warn:'Point of no return. Manual save first and move at least $5,000 into Family Savings. Cash on hand is lost and you lose Jason’s house. Grab the five missable magazines in the house first.' }),
+        m('Tourist Trap','Take up Mattia’s offer',['pnr']),
         m('Home Sweet Home',''),
         m('Discharge Time','')
       ]},
@@ -82,12 +82,12 @@
         m('Thrillbillies','Check out the Mud Club · Billy 1',['opt'],{ at:'Mud Club' }),
         m('Twist Wrist, Smash, Grab','Join Billy on a job · Billy 2',['opt']),
         m('Hit Avery Pawn','Port Gellhorn',['opt']),
-        m('Hit Kingpin Bowling','Kolts & Associates',['opt'],{ tip:'Grab all three key valuables (watch in SE office, Gutterball Moreland 850 shotgun on NE table, office safe) and lose the cops for Let’s Go Bowling. Bring sticky bombs.' }),
+        m('Hit Kingpin Bowling','Kolts & Associates',['opt']),
         m('Impounded Vehicle','',['opt','L']),
         m('Prepare for Vice City',''),
         m('Veteran Hunted','Meet Bret · Bret 1',['opt','J'],{ tip:'Pays $500 and the unique Killtelligence SM-69. Starts the hunting decks.' }),
         m('Afternoon Delight','Rob Vicki’s boss'),
-        m('Checking Out','Move to Vice City',['pnr'],{ warn:'Point of no return. Have about $15,000 saved and make a manual save. You lose the motel and the two motel magazines. If it never starts, call Cal as Jason and fully close the game.' })
+        m('Checking Out','Move to Vice City',['pnr'])
       ]},
       { name:'Chapter 3', note:'Vice City. Home base is the Bayside apartment.', items:[
         m('Welcome to Vice City','',[],{ tip:'Unlocks the Bayside safehouse and the Ch.2 trophy.' }),
@@ -102,7 +102,7 @@
         m('Boobie Time','Talk to Boobie',['J']),
         m('Buddy?','Check on Kyle · Kyle finale',['opt']),
         m('Meet the Heders','Meet Brian & Lori'),
-        m('Yasmani’s Jewelry Jobs','Richardson Jewelry, Donovan Banks & Co, Casa de Empeño',[],{ tip:'Pays $20,000 from objective items plus loot. Rewards the Snap Gun.' }),
+        m('Yasmani’s Jewelry Jobs','Richardson Jewelry, Donovan Banks & Co, Casa de Empeño',[]),
         m('Bumper to Bumper','Mentor Yago · Yago 2',['opt','J']),
         m('Car Service','Steal the car for Raul',['L']),
         m('Send More Money to Lorena',''),
