@@ -100,7 +100,7 @@
     if (it.ed && /ultimate/i.test(it.ed)) badges.push('<span class="badge ue">Ultimate Edition</span>');
     if (it.trk && it.trk !== 'None') badges.push('<span class="badge rep">' + esc(it.trk) + ' tracker</span>');
     h += '<div class="c-badges">' + badges.join('') + '</div>' + bars(it, kind);
-    h += '<p class="links"><a class="btn sm" href="' + esc(it.u) + '" target="_blank" rel="noopener">📷 More photos on GTABase ↗</a>' +
+    h += '<p class="links">' + (it.extra ? '<a class="btn sm" href="https://www.google.com/search?tbm=isch&q=' + encodeURIComponent('GTA 6 ' + it.n) + '" target="_blank" rel="noopener">📷 Find photos ↗</a>' : '<a class="btn sm" href="' + esc(it.u) + '" target="_blank" rel="noopener">📷 More photos on GTABase ↗</a>') +
       (it.where && G.places[it.where] ? ' <a class="btn sm" href="#/map?place=' + encodeURIComponent(it.where) + '">📍 ' + esc(it.where) + ' on the map</a>' : '') + '</p></div></div>';
 
     if (kind === 'vehicles') {
@@ -127,6 +127,7 @@
       if (vars.length || sibs.length) h += '<section class="panel"><h2 class="sec">Variants</h2><ul>' +
         (vars.length ? vars.map(n => '<li>' + link('weapons', n) + '</li>').join('') : sibs.map(x => '<li><a href="#/w/' + x.s + '">' + esc(x.n) + '</a></li>').join('')) + '</ul></section>';
     }
+    if (it.extra) h += '<section class="panel"><h2 class="sec">Heads up</h2><p>This one is confirmed in the game but full stats have not been published yet. Check back after the next update.</p></section>';
     if (it.notes && it.notes.length) h += '<section class="panel"><h2 class="sec">Guide notes</h2>' + it.notes.map(n => '<div class="tipline">' + n + '</div>').join('') + '</section>';
     const rel = K.list.filter(x => x !== it && x.c === it.c).sort((a, b) => (b.img ? 1 : 0) - (a.img ? 1 : 0)).slice(0, 8);
     h += '</div>';
@@ -150,7 +151,7 @@
   function howToGet(it) {
     const tips = [];
     if (it.set) tips.push('Standouts do not spawn in traffic. Go to the spot, scan it with WAiNK, then take it. Register it or park it in a garage before you leave it, or it can vanish.');
-    else if (!NO_MODS.test(it.c || '')) tips.push('This model drives around in traffic. Scan passing cars with WAiNK (hold Up, aim, hold R1) to log it.');
+    else if (!NO_MODS.test(it.c || '') && !it.unlock && !it.ed && !it.notes && !it.extra) tips.push('This model drives around in traffic. Scan passing cars with WAiNK (hold Up, aim, hold R1) to log it.');
     if (it.trk === 'Standard') tips.push('Standard tracker. Police get alerted where you stole it, and Moses will not buy it. Any Pay ’n’ Spray can register it from Chapter 3.');
     if (it.trk === 'Advanced') tips.push('Advanced tracker. You need the Key Cloner (Chapter 3), and only Randy buys these. Do not drive slowly or the tracker pings police.');
     if (/Military/i.test(it.c || '')) tips.push('Military vehicles come from Mile Zero Air Station on Goose Key. Expect a heavy army response, and they cannot be stored in a garage.');

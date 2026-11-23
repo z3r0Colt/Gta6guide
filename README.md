@@ -8,6 +8,7 @@ cars/boats/planes, mod shops, weapons, gun stores, shops, garages & safehouses, 
 the 100% checklist, challenges, cheats, glitches, secrets, radio, characters, editions and an interactive map.
 
 The map is Rockstar's official Leonida map (assets/leonida-map.jpg, from rockstargames.com/VI/media). Map © Rockstar Games.
+The vehicle and weapon databases (`data/db.js`) are built from GTABase.com specs plus community guides. Images in `assets/img` are official Rockstar Games media.
 
 ## Run locally
 ```
